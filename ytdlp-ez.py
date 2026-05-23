@@ -32,23 +32,28 @@ def main():
             print("Exiting...")
             break
 
-        url = input("Enter video URL: ").strip()
-
-        if choice == "1":
-            # Audio only
-            cmd = f'yt-dlp -f bestaudio -x --audio-format mp3 -o "{download_dir}/%(title)s.%(ext)s" "{url}"'
-        elif choice == "2":
-            # Video only
-            cmd = f'yt-dlp -f "bestvideo[height<=1080][vcodec^=avc1]" --merge-output-format mp4 -o "{download_dir}/%(title)s.%(ext)s" "{url}"'
-        elif choice == "3":
-            # Both audio + video
-            cmd = f'yt-dlp -f "bestvideo[ext=mp4][vcodec^=avc1][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4][vcodec^=avc1][height<=1080]" -o "{download_dir}/%(title)s.%(ext)s" "{url}"'
-        else:
+        if choice not in ["1", "2", "3"]:
             print("Invalid choice, try again.")
             continue
 
-        print(f"\nRunning command:\n{cmd}\n")
-        os.system(cmd)
+        urls = input("Enter video URL(s) separated by space: ").strip().split()
+        if not urls:
+            print("No URLs provided.")
+            continue
+
+        for url in urls:
+            if choice == "1":
+                # Audio only
+                cmd = f'yt-dlp -f bestaudio -x --audio-format mp3 -o "{download_dir}/%(title)s.%(ext)s" "{url}"'
+            elif choice == "2":
+                # Video only
+                cmd = f'yt-dlp -f "bestvideo[height<=1080][vcodec^=avc1]" --merge-output-format mp4 -o "{download_dir}/%(title)s.%(ext)s" "{url}"'
+            elif choice == "3":
+                # Both audio + video
+                cmd = f'yt-dlp -f "bestvideo[ext=mp4][vcodec^=avc1][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4][vcodec^=avc1][height<=1080]" -o "{download_dir}/%(title)s.%(ext)s" "{url}"'
+
+            print(f"\nRunning command for {url}:\n{cmd}\n")
+            os.system(cmd)
 
 if __name__ == "__main__":
     main()
